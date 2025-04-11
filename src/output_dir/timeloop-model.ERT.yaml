@@ -1,0 +1,108 @@
+ERT:
+    version: '0.4'
+    tables:
+      - name: system_arch_top_level.DRAM[1..1]
+        actions:
+          - name: write
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 512.0
+          - name: update
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 512.0
+          - name: read
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 512.0
+          - name: leak
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 0.0
+      - name: system_arch_top_level.global_buffer[1..1]
+        actions:
+          - name: write
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 27.5274
+          - name: update
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 27.5274
+          - name: read
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 20.3074
+          - name: leak
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 0.000927107
+      - name: system_arch_top_level.scratchpad[1..16]
+        actions:
+          - name: read
+            arguments: {}
+            energy: 0.83416
+          - name: write
+            arguments: {}
+            energy: 0.83416
+          - name: update
+            arguments: {}
+            energy: 0.83416
+          - name: leak
+            arguments: {}
+            energy: 0.0007728
+      - name: system_arch_top_level.weight_reg[1..16]
+        actions:
+          - name: read
+            arguments: {}
+            energy: 0.144
+          - name: write
+            arguments: {}
+            energy: 0.144
+          - name: update
+            arguments: {}
+            energy: 0.144
+          - name: leak
+            arguments: {}
+            energy: 0.00112
+      - name: system_arch_top_level.input_activation_reg[1..16]
+        actions:
+          - name: read
+            arguments: {}
+            energy: 0.144
+          - name: write
+            arguments: {}
+            energy: 0.144
+          - name: update
+            arguments: {}
+            energy: 0.144
+          - name: leak
+            arguments: {}
+            energy: 0.00112
+      - name: system_arch_top_level.output_activation_reg[1..16]
+        actions:
+          - name: read
+            arguments: {}
+            energy: 0.144
+          - name: write
+            arguments: {}
+            energy: 0.144
+          - name: update
+            arguments: {}
+            energy: 0.144
+          - name: leak
+            arguments: {}
+            energy: 0.00112
+      - name: system_arch_top_level.mac[1..16]
+        actions:
+          - name: compute
+            arguments: {}
+            energy: 3.275

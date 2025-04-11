@@ -1,0 +1,80 @@
+# ==========================================================================
+# Please update this file to reflect the addition of address generator
+# ==========================================================================
+compound_components:
+  version: 0.4
+  classes:
+  - name: smart_storage
+    attributes:        # default attribute values (can be overridden by architecture specifications)
+      technology: "45nm"
+      depth: 24
+      width: 16
+    subcomponents:     # a list of all components that this compound component is composed of (one in this example)
+    - name: storage
+      class: regfile # primitive class defined in primitive class library
+      attributes:    # lower-level attributes that are mapped from upper level
+        technology: technology
+        latency: global_cycle_seconds
+        depth : depth
+        width: width
+
+    # ============================================================
+    # Add your hardware description for the address generator here
+    # ============================================================
+    - name: {{address_generator_name}}
+      class: {{address_generator_class}}
+      attributes:
+        technology: {{address_generator_technology_attribute}}
+        datawidth:  {{address_generator_number_of_address_bits}}
+        width: {{address_generator_number_of_address_bits}}
+
+    actions:           # definitions of the compound actions in terms of the lower-level actions
+    - name: read
+      subcomponents:
+      - name: storage
+        actions:
+        - name: read
+          arguments:
+            address_delta: 1  # action argument: stands for the amount of toggling on address wires
+            data_delta: 1     # action argument: stands for the amount of toggling on data wires
+
+      # ============================================================
+      # What action should the address generator perform for read?
+      # ============================================================
+      - name: {{address_generator_name}}
+        actions:
+        - name: {{address_generator_action_for_write}}
+          arguments: {} # None needed here!
+
+    - &write_action # This anchor can be referenced later to
+      name: write
+      subcomponents:
+      - name: storage
+        actions:
+        - name: write
+          arguments:
+            address_delta: 1 # action argument: means the amount of toggling on address wires
+            data_delta: 1    # action argument: means the amount of toggling on data wires
+
+        # ============================================================
+        # What action should the address generator perform for write?
+        # ============================================================
+        - name: {{address_generator_name}}
+          actions:
+          - name: {{address_generator_action_for_write}}
+            arguments: {} # None needed here!
+
+    - name: update # Update action is the same as write action, so reference the anchor
+      <<<: *write_action
+
+    - name: leak
+      subcomponents: 
+      - {name: storage, actions: [{name: leak}]}
+
+      # ============================================================
+      # What action should the address generator perform for leak?
+      # ============================================================
+      - name: {{address_generator_name}}
+        actions:
+        - name: {{address_generator_action_for_leak}}
+          arguments: {} # None needed here!

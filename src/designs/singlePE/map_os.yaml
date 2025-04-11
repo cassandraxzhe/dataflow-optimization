@@ -1,0 +1,64 @@
+# ========================================================================
+# Please do not modify this file. If there are double-curly-brace-enclosed
+# statements, they are placeholders that should be set from the notebooks.
+# ========================================================================
+mapping:
+# =================================================================
+# Mapping for the DRAM and scratchpads.
+# =================================================================
+- target: DRAM
+  type: temporal
+  factors: 
+  - R={{DRAM_factor_R}}
+  - S={{DRAM_factor_S}}
+  - P={{DRAM_factor_P}}
+  - Q={{DRAM_factor_Q}}
+  - N={{DRAM_factor_N}}
+  - M={{DRAM_factor_M}}
+  - C={{DRAM_factor_C}}
+  permutation: {{DRAM_permutation}}
+
+- target: scratchpad
+  type: temporal
+  factors: 
+  - R={{scratchpad_factor_R}}
+  - S={{scratchpad_factor_S}}
+  - P={{scratchpad_factor_P}}
+  - Q={{scratchpad_factor_Q}}
+  - N={{scratchpad_factor_N}}
+  - M={{scratchpad_factor_M}}
+  - C={{scratchpad_factor_C}}
+  permutation: {{scratchpad_permutation}}
+
+- target: scratchpad
+  type: dataspace
+  keep: {{scratchpad_keep_list}}
+  bypass: {{scratchpad_bypass_list}}
+
+#========================================================
+# Mapping for the registers. We will not change these.
+#========================================================
+- target: weight_reg
+  type: temporal
+  factors: [R=1, S=1, P=1, Q=1, M=1, C=1, N=1]
+  permutation: [P, Q, C, M, R, S, N]
+- target: weight_reg
+  type: dataspace
+  keep: [Weights]
+  bypass: [Inputs, Outputs]
+- target: input_activation_reg
+  type: temporal
+  factors: [R=1, S=1, P=1, Q=1, M=1, C=1, N=1]
+  permutation: [P, Q, C, M, R, S, N]
+- target: input_activation_reg
+  type: dataspace
+  keep: [Inputs]
+  bypass: [Weights, Outputs]
+- target: output_activation_reg
+  type: temporal
+  factors: [R=1, S=1, P=1, Q=1, M=1, C=1, N=1]
+  permutation: [P, Q, C, M, R, S, N]
+- target: output_activation_reg
+  type: dataspace
+  keep: [Outputs]
+  bypass: [Weights, Inputs]

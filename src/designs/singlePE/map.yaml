@@ -1,0 +1,44 @@
+# ========================================================================
+# Please do not modify this file. If there are double-curly-brace-enclosed
+# statements, they are placeholders that should be set from the notebooks.
+# ========================================================================
+mapping:
+# mapping for the DRAM
+- target: DRAM
+  type: temporal
+  factors: [R=1, S=1, P=1, Q=1, N=50, M=4, C=4]
+  permutation: [R, S, P, Q, C, M, N]
+# mapping for the local scratchpad inside the PE
+- target: scratchpad
+  type: temporal
+  factors: [R=0, S=0, P=0, Q=0, N=1, M=2, C=1] # factor of 0 => full dimension
+  permutation: [Q, P, N, C, M, S, R]
+- target: scratchpad
+  type: dataspace
+  keep: [Weights]
+  bypass: [Inputs, Outputs]
+# mapping for the input and output registers of the mac unit
+- target: weight_reg
+  type: temporal
+  factors: [R=1, S=1, P=1, Q=1, M=1, C=1, N=1]
+  permutation: [P, Q, C, M, R, S, N]
+- target: weight_reg
+  type: dataspace
+  keep: [Weights]
+  bypass: [Inputs, Outputs]
+- target: input_activation_reg
+  type: temporal
+  factors: [R=1, S=1, P=1, Q=1, M=1, C=1, N=1]
+  permutation: [P, Q, C, M, R, S, N]
+- target: input_activation_reg
+  type: dataspace
+  keep: [Inputs]
+  bypass: [Weights, Outputs]
+- target: output_activation_reg
+  type: temporal
+  factors: [R=1, S=1, P=1, Q=1, M=1, C=1, N=1]
+  permutation: [P, Q, C, M, R, S, N]
+- target: output_activation_reg
+  type: dataspace
+  keep: [Outputs]
+  bypass: [Weights, Inputs]

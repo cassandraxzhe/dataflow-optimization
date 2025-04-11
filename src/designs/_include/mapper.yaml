@@ -1,0 +1,11 @@
+mapper:
+  version: 0.4
+  optimization_metric: [ delay ]
+  live_status: False
+  diagnostics: False
+  num_threads: 8
+  timeout: 15000
+  victory_condition: 800
+  search_size: 20000
+  algorithm: random
+  max_permutations_per_if_visit: 4
