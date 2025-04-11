@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from typing import Any, List, Optional, Tuple, Type, Union
+from io import StringIO
 from ruamel.yaml.compat import StringIO
 import pytimeloop.timeloopfe.v4 as tl
 from pytimeloop.timeloopfe.common.nodes import DictNode
