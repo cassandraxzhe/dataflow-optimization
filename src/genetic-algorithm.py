@@ -44,7 +44,8 @@ def genetic_algorithm(goalFitness: int = 0, params: list = params, iterations: i
 
     goalFitnessAcheived = False
     i = 0
-    
+    most_fit = None
+
     # for each generation
     while (not goalFitnessAcheived | i < iterations):
         # Generate the 20 children
@@ -62,8 +63,9 @@ def genetic_algorithm(goalFitness: int = 0, params: list = params, iterations: i
         selected_children = sorted_children[:10]
 
         # check if the goal fitness has been reached 
-        if fitnesses[selected_children[0]] == 0:
-            goalFitness = True
+        if fitnesses[selected_children[0]] >= goalFitness:
+            goalFitnessAcheived = True
+            most_fit = selected_children[0]
             break
 
         # create the next generation
@@ -78,5 +80,7 @@ def genetic_algorithm(goalFitness: int = 0, params: list = params, iterations: i
         # replace the old generation with the new generation
         parents = next_generation
         i += 1
+
+    return most_fit
 
 
