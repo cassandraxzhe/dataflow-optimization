@@ -1,5 +1,9 @@
 import random
 import numpy as np
+import os
+import shutil
+import timeloop as tl
+
 
 
 
@@ -7,7 +11,14 @@ params = ['M', 'N', 'K', 'C', 'P', 'Q']
 
 
 def evaluate_fitness(child: str) -> int:
-    return 0;
+    # run the config through timeloop
+
+    latency = 1 # TODO: get the latency from the child
+    energy = 1 # TODO: get the energy from the child
+
+    # calculate the fitness of the child
+    fitness = 1 / (latency * energy)
+    return fitness;
 
 
 def crossover(parent1: str, parent2: str) -> str:
@@ -16,6 +27,14 @@ def crossover(parent1: str, parent2: str) -> str:
     # Create the child by combining parts of both parents
     child = parent1[:crossover_point] + parent2[crossover_point:]
     # TODO: make sure it's a valid child
+
+    for param in params:
+        # TODO: what
+        if param not in child:
+            # if the param is not in the child, add it
+            child = child + param
+            ValueError(f"Invalid child: {child}")
+    
     return child
 
 
