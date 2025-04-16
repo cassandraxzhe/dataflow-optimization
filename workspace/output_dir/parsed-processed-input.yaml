@@ -1,0 +1,524 @@
+dumped_by_timeloop_front_end: true
+architecture:
+    version: '0.4'
+    subtree:
+      - name: system_arch_top_level
+        attributes:
+            version: '0.4'
+            technology: "45nm"
+            global_cycle_seconds: 1e-9
+            datawidth: 16
+            has_power_gating: false
+            power_gated_at: null
+        local:
+          - name: DRAM[1..1]
+            class: DRAM
+            attributes:
+                width: 64
+                datawidth: 16
+                depth: 1000000
+                has_power_gating: false
+                n_banks: 2
+                cluster_size: 1
+                reduction_supported: true
+                multiple_buffering: 1
+                min_utilization: 0
+                allow_overbooking: false
+                meshX: 1
+                meshY: 1
+                technology: "45nm"
+                global_cycle_seconds: 1e-9
+                power_gated_at: null
+            required_actions:
+              - write
+              - leak
+              - read
+              - update
+            enabled: true
+          - name: global_buffer[1..1]
+            class: SRAM
+            attributes:
+                width: 128
+                depth: 2048
+                datawidth: 16
+                n_banks: 1
+                n_rdwr_ports: 2
+                has_power_gating: false
+                cluster_size: 1
+                reduction_supported: true
+                multiple_buffering: 1
+                min_utilization: 0
+                allow_overbooking: false
+                meshX: 1
+                meshY: 1
+                technology: "45nm"
+                global_cycle_seconds: 1e-9
+                power_gated_at: null
+            required_actions:
+              - write
+              - leak
+              - read
+              - update
+            enabled: true
+          - name: inter_PE_spatial[1..1]
+            class: dummy_storage
+            attributes:
+                width: 1
+                depth: 1
+                datawidth: 1
+                technology: -1
+                has_power_gating: false
+                n_banks: 2
+                cluster_size: 1
+                reduction_supported: true
+                multiple_buffering: 1
+                min_utilization: 0
+                allow_overbooking: false
+                meshX: 1
+                meshY: 1
+                global_cycle_seconds: 1e-9
+                power_gated_at: null
+            enabled: true
+          - name: scratchpad[1..16]
+            class: smart_storage
+            attributes:
+                depth: 128
+                width: 16
+                datawidth: 16
+                has_power_gating: false
+                n_banks: 2
+                cluster_size: 1
+                reduction_supported: true
+                multiple_buffering: 1
+                min_utilization: 0
+                allow_overbooking: false
+                meshX: 2
+                meshY: 8
+                technology: "45nm"
+                global_cycle_seconds: 1e-9
+                power_gated_at: null
+            required_actions:
+              - write
+              - leak
+              - read
+              - update
+            enabled: true
+          - name: weight_reg[1..16]
+            class: reg_storage
+            attributes:
+                depth: 1
+                width: 16
+                datawidth: 16
+                has_power_gating: false
+                n_banks: 2
+                cluster_size: 1
+                reduction_supported: true
+                multiple_buffering: 1
+                min_utilization: 0
+                allow_overbooking: false
+                meshX: 2
+                meshY: 8
+                technology: "45nm"
+                global_cycle_seconds: 1e-9
+                power_gated_at: null
+            required_actions:
+              - write
+              - leak
+              - read
+              - update
+            enabled: true
+          - name: input_activation_reg[1..16]
+            class: reg_storage
+            attributes:
+                depth: 1
+                width: 16
+                datawidth: 16
+                has_power_gating: false
+                n_banks: 2
+                cluster_size: 1
+                reduction_supported: true
+                multiple_buffering: 1
+                min_utilization: 0
+                allow_overbooking: false
+                meshX: 2
+                meshY: 8
+                technology: "45nm"
+                global_cycle_seconds: 1e-9
+                power_gated_at: null
+            required_actions:
+              - write
+              - leak
+              - read
+              - update
+            enabled: true
+          - name: output_activation_reg[1..16]
+            class: reg_storage
+            attributes:
+                depth: 1
+                width: 16
+                datawidth: 16
+                has_power_gating: false
+                n_banks: 2
+                cluster_size: 1
+                reduction_supported: true
+                multiple_buffering: 1
+                min_utilization: 0
+                allow_overbooking: false
+                meshX: 2
+                meshY: 8
+                technology: "45nm"
+                global_cycle_seconds: 1e-9
+                power_gated_at: null
+            required_actions:
+              - write
+              - leak
+              - read
+              - update
+            enabled: true
+          - name: mac[1..16]
+            class: mac_compute
+            attributes:
+                num_pipline_stages: 2
+                datawidth: 16
+                has_power_gating: false
+                meshX: 2
+                meshY: 8
+                technology: "45nm"
+                global_cycle_seconds: 1e-9
+                power_gated_at: null
+            required_actions:
+              - compute
+            enabled: true
+architecture_constraints:
+    targets:
+      - factors: C=1,M=1,R=1,S=1,N=1,P=1,Q=1
+        permutation: CMRSNPQ
+        type: temporal
+        target: inter_PE_spatial
+      - bypass:
+          - Weights
+          - Inputs
+          - Outputs
+        type: bypass
+        target: inter_PE_spatial
+problem:
+    version: '0.4'
+    shape:
+        name: "CNN_Layer"
+        dimensions:
+          - C
+          - M
+          - R
+          - S
+          - N
+          - P
+          - Q
+        coefficients:
+          - name: Wstride
+            default: 1
+          - name: Hstride
+            default: 1
+          - name: Wdilation
+            default: 1
+          - name: Hdilation
+            default: 1
+        data_spaces:
+          - name: Weights
+            projection:
+              -   -   - C
+              -   -   - M
+              -   -   - R
+              -   -   - S
+            read_write: false
+          - name: Inputs
+            projection:
+              -   -   - N
+              -   -   - C
+              -   -   - R
+                      - Wdilation
+                  -   - P
+                      - Wstride
+              -   -   - S
+                      - Hdilation
+                  -   - Q
+                      - Hstride
+            read_write: false
+          - name: Outputs
+            projection:
+              -   -   - N
+              -   -   - M
+              -   -   - Q
+              -   -   - P
+            read_write: true
+    instance:
+        C: 4
+        M: 8
+        R: 5
+        S: 5
+        P: 28
+        Q: 28
+        N: 50
+        densities: {}
+compound_components:
+    version: '0.4'
+    classes:
+      - name: mac_compute
+        attributes:
+            technology: "45nm"
+            datawidth: datawidth
+            num_pipeline_stages: 2
+        subcomponents:
+          - name: compute_unit
+            class: intmac
+            attributes:
+                technology: technology
+                latency: global_cycle_seconds
+                datawidth: datawidth
+                width: datawidth
+                num_pipeline_stages: 2
+        actions:
+          - name: compute
+            subcomponents:
+              - name: compute_unit
+                actions:
+                  - name: read
+                    arguments:
+                        address_delta: 1
+                        data_delta: 1
+      - name: reg_storage
+        attributes:
+            technology: "45nm"
+            width: 16
+            depth: 1
+        subcomponents:
+          - name: storage
+            class: reg
+            attributes:
+                technology: technology
+                latency: global_cycle_seconds
+                datawidth: width
+                width: width
+        actions:
+          - name: read
+            subcomponents:
+              - name: storage
+                actions:
+                  - name: read
+          - name: write
+            subcomponents:
+              - name: storage
+                actions:
+                  - name: write
+          - name: update
+            subcomponents:
+              - name: storage
+                actions:
+                  - name: update
+          - name: leak
+            subcomponents:
+              - name: storage
+                actions:
+                  - name: leak
+      - name: smart_storage
+        attributes:
+            technology: "45nm"
+            depth: 24
+            width: 16
+        subcomponents:
+          - name: storage
+            class: regfile
+            attributes:
+                technology: technology
+                latency: global_cycle_seconds
+                depth: depth
+                width: width
+        actions:
+          - name: read
+            subcomponents:
+              - name: storage
+                actions:
+                  - name: read
+                    arguments:
+                        address_delta: 1
+                        data_delta: 1
+          - name: write
+            subcomponents:
+              - name: storage
+                actions:
+                  - name: write
+                    arguments:
+                        address_delta: 1
+                        data_delta: 1
+          - name: update
+            subcomponents:
+              - name: storage
+                actions:
+                  - name: write
+                    arguments:
+                        address_delta: 1
+                        data_delta: 1
+          - name: leak
+            subcomponents:
+              - name: storage
+                actions:
+                  - name: leak
+mapping: []
+mapper:
+    version: '0.4'
+    optimization_metric:
+      - delay
+    live_status: false
+    diagnostics: false
+    num_threads: 8
+    timeout: 15000
+    victory_condition: 800
+    search_size: 20000
+    algorithm: random
+    max_permutations_per_if_visit: 4
+    out_prefix: timeloop-mapper
+    sync_interval: null
+    log_interval: 1
+    log_oaves: false
+    log_oaves_mappings: false
+    log_stats: false
+    log_suboptimal: false
+    penalize_consecutive_bypass_fails: false
+    emit_whoop_nest: false
+    max_temporal_loops_in_a_mapping: -1
+    filter_revisits: false
+mapspace:
+    version: '0.4'
+    template: uber
+globals:
+    version: '0.4'
+    environment_variables:
+        TIMELOOP_HIDE_INCONSEQUNTIAL_STATS: true
+    expression_custom_functions: []
+    accelergy_plug_ins: []
+ART:
+    version: '0.4'
+    tables:
+      - name: system_arch_top_level.DRAM[1..1]
+        area: 0.0
+      - name: system_arch_top_level.global_buffer[1..1]
+        area: 97538.7
+      - name: system_arch_top_level.inter_PE_spatial[1..1]
+        area: 1.0
+      - name: system_arch_top_level.scratchpad[1..16]
+        area: 1965.98
+      - name: system_arch_top_level.weight_reg[1..16]
+        area: 95.68
+      - name: system_arch_top_level.input_activation_reg[1..16]
+        area: 95.68
+      - name: system_arch_top_level.output_activation_reg[1..16]
+        area: 95.68
+      - name: system_arch_top_level.mac[1..16]
+        area: 1726.5
+ERT:
+    version: '0.4'
+    tables:
+      - name: system_arch_top_level.DRAM[1..1]
+        actions:
+          - name: write
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 512.0
+          - name: leak
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 0.0
+          - name: read
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 512.0
+          - name: update
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 512.0
+      - name: system_arch_top_level.global_buffer[1..1]
+        actions:
+          - name: write
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 27.5274
+          - name: leak
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 0.000927107
+          - name: read
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 20.3074
+          - name: update
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 27.5274
+      - name: system_arch_top_level.scratchpad[1..16]
+        actions:
+          - name: read
+            arguments: {}
+            energy: 0.83416
+          - name: write
+            arguments: {}
+            energy: 0.83416
+          - name: update
+            arguments: {}
+            energy: 0.83416
+          - name: leak
+            arguments: {}
+            energy: 0.0007728
+      - name: system_arch_top_level.weight_reg[1..16]
+        actions:
+          - name: read
+            arguments: {}
+            energy: 0.144
+          - name: write
+            arguments: {}
+            energy: 0.144
+          - name: update
+            arguments: {}
+            energy: 0.144
+          - name: leak
+            arguments: {}
+            energy: 0.00112
+      - name: system_arch_top_level.input_activation_reg[1..16]
+        actions:
+          - name: read
+            arguments: {}
+            energy: 0.144
+          - name: write
+            arguments: {}
+            energy: 0.144
+          - name: update
+            arguments: {}
+            energy: 0.144
+          - name: leak
+            arguments: {}
+            energy: 0.00112
+      - name: system_arch_top_level.output_activation_reg[1..16]
+        actions:
+          - name: read
+            arguments: {}
+            energy: 0.144
+          - name: write
+            arguments: {}
+            energy: 0.144
+          - name: update
+            arguments: {}
+            energy: 0.144
+          - name: leak
+            arguments: {}
+            energy: 0.00112
+      - name: system_arch_top_level.mac[1..16]
+        actions:
+          - name: compute
+            arguments: {}
+            energy: 3.275

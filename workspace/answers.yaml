@@ -1,0 +1,21 @@
+'3.2':
+  1x16 cycles and energy (uJ) for conv1:
+    answer:
+    - 980000
+    - 1130.67
+    assumptions: []
+  1x16 cycles and energy (uJ) for conv2:
+    answer:
+    - 2240000
+    - 8095.5
+    assumptions: []
+  2x8 cycles and energy (uJ) for conv1:
+    answer:
+    - 980000
+    - 1130.67
+    assumptions: []
+  4x4 cycles and energy (uJ) for conv1:
+    answer:
+    - 980000
+    - 1130.67
+    assumptions: []
