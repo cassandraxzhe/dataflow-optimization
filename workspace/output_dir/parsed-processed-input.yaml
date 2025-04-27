@@ -30,9 +30,9 @@ architecture:
                 global_cycle_seconds: 1e-9
                 power_gated_at: null
             required_actions:
+              - read
               - write
               - leak
-              - read
               - update
             enabled: true
           - name: global_buffer[1..1]
@@ -55,9 +55,9 @@ architecture:
                 global_cycle_seconds: 1e-9
                 power_gated_at: null
             required_actions:
+              - read
               - write
               - leak
-              - read
               - update
             enabled: true
           - name: inter_PE_spatial[1..1]
@@ -98,9 +98,9 @@ architecture:
                 global_cycle_seconds: 1e-9
                 power_gated_at: null
             required_actions:
+              - read
               - write
               - leak
-              - read
               - update
             enabled: true
           - name: weight_reg[1..16]
@@ -122,9 +122,9 @@ architecture:
                 global_cycle_seconds: 1e-9
                 power_gated_at: null
             required_actions:
+              - read
               - write
               - leak
-              - read
               - update
             enabled: true
           - name: input_activation_reg[1..16]
@@ -146,9 +146,9 @@ architecture:
                 global_cycle_seconds: 1e-9
                 power_gated_at: null
             required_actions:
+              - read
               - write
               - leak
-              - read
               - update
             enabled: true
           - name: output_activation_reg[1..16]
@@ -170,9 +170,9 @@ architecture:
                 global_cycle_seconds: 1e-9
                 power_gated_at: null
             required_actions:
+              - read
               - write
               - leak
-              - read
               - update
             enabled: true
           - name: mac[1..16]
@@ -419,6 +419,11 @@ ERT:
     tables:
       - name: system_arch_top_level.DRAM[1..1]
         actions:
+          - name: read
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 512.0
           - name: write
             arguments:
                 global_cycle_seconds: 1e-09
@@ -429,11 +434,6 @@ ERT:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
             energy: 0.0
-          - name: read
-            arguments:
-                global_cycle_seconds: 1e-09
-                action_latency_cycles: 1
-            energy: 512.0
           - name: update
             arguments:
                 global_cycle_seconds: 1e-09
@@ -441,6 +441,11 @@ ERT:
             energy: 512.0
       - name: system_arch_top_level.global_buffer[1..1]
         actions:
+          - name: read
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
+            energy: 20.3074
           - name: write
             arguments:
                 global_cycle_seconds: 1e-09
@@ -451,11 +456,6 @@ ERT:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
             energy: 0.000927107
-          - name: read
-            arguments:
-                global_cycle_seconds: 1e-09
-                action_latency_cycles: 1
-            energy: 20.3074
           - name: update
             arguments:
                 global_cycle_seconds: 1e-09

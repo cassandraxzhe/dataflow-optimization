@@ -396,15 +396,15 @@ architecture:
       - name: system_arch_top_level.DRAM[1..1]
         class: DRAM
         actions:
+          - name: read
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
           - name: write
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
           - name: leak
-            arguments:
-                global_cycle_seconds: 1e-09
-                action_latency_cycles: 1
-          - name: read
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
@@ -415,15 +415,15 @@ architecture:
       - name: system_arch_top_level.global_buffer[1..1]
         class: SRAM
         actions:
+          - name: read
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
           - name: write
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
           - name: leak
-            arguments:
-                global_cycle_seconds: 1e-09
-                action_latency_cycles: 1
-          - name: read
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
