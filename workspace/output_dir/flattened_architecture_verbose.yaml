@@ -400,15 +400,15 @@ architecture:
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
+          - name: leak
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
           - name: read
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
           - name: update
-            arguments:
-                global_cycle_seconds: 1e-09
-                action_latency_cycles: 1
-          - name: leak
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
@@ -419,15 +419,15 @@ architecture:
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
+          - name: leak
+            arguments:
+                global_cycle_seconds: 1e-09
+                action_latency_cycles: 1
           - name: read
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
           - name: update
-            arguments:
-                global_cycle_seconds: 1e-09
-                action_latency_cycles: 1
-          - name: leak
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1

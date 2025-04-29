@@ -1,5 +1,5 @@
 import unittest
-from src import genetic_algorithm as ga
+from . import DONT_USE_genetic_algorithm as ga
 import random
 
 class TestGeneticAlgorithm(unittest.TestCase):
