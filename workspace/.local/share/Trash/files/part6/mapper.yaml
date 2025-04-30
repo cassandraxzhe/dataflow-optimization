@@ -1,0 +1,6 @@
+mapper:
+  optimization_metrics:  [ edp, delay, energy ]
+  num_threads: 4
+  timeout: 10000000
+  victory_condition: 1000
+  algorithm: random

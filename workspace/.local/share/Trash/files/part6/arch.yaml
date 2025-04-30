@@ -1,0 +1,51 @@
+architecture:
+  version: 0.4
+  nodes:
+  - !Container
+    name: system
+    attributes:
+      technology: "45nm"
+      datawidth: 16
+      metadata_datawidth: {{metadata_datawidth}}
+      global_cycle_seconds: 1e-9
+    
+  - !Component
+    name: DRAM
+    class: DRAM_metadata
+    attributes:
+      width: 32
+      datawidth: datawidth
+
+      metadata_datawidth: metadata_datawidth
+      metadata_width: metadata_datawidth
+      read_bandwidth: 2
+      write_bandwidth: 2
+    
+  - !Component
+    name: Buffer
+    class: storage
+    subclass: SRAM_MD
+    attributes:
+      data_storage_depth: 512
+      data_storage_width: datawidth
+      datawidth: datawidth
+
+      metadata_storage_width: metadata_datawidth
+      metadata_storage_depth: 512
+      meshY: 1
+      meshX: 1
+
+      read_bandwidth: 8
+      write_bandwidth: 8
+      enable_overbooking: True
+
+  - !Container
+    name: PE
+    spatial: {meshX: 4}
+  
+  - !Component
+    name: MAC
+    class: compute
+    subclass: Fmac
+    attributes:
+      datawidth: datawidth

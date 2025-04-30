@@ -1,0 +1,156 @@
+mapping:
+- factors:
+  - P=1
+  - Q=1
+  - R=1
+  - S=1
+  - N={{DRAM_factor_N}}
+  - M={{DRAM_factor_M}}
+  - C={{DRAM_factor_C}}
+  permutation:
+  - S
+  - R
+  - Q
+  - P
+  - C
+  - M
+  - N
+  target: DRAM
+  type: temporal
+- factors:
+  - P=1
+  - Q=1
+  - R=1
+  - S=1
+  - N={{global_buffer_factor_N}}
+  - M={{global_buffer_factor_M}}
+  - C={{global_buffer_factor_C}}
+  permutation:
+  - N
+  - C
+  - M
+  - S
+  - Q
+  - P
+  - R
+  target: global_buffer
+  type: temporal
+- factors:
+  - P=1
+  - Q=1
+  - R=1
+  - S=1
+  - N=1
+  - M={{PE_spatial_factor_M}}
+  - C={{PE_spatial_factor_C}}
+  permutation:
+  - C
+  - M
+  - R
+  - S
+  - P
+  - Q
+  - N
+  split: 1
+  target: PE
+  type: spatial
+- factors:
+  - R=0
+  - S=0
+  - P=0
+  - Q=0
+  - M=1
+  - C=1
+  - N={{scratchpad_factor_N}}
+  permutation:
+  - Q
+  - P
+  - N
+  - C
+  - M
+  - S
+  - R
+  target: scratchpad
+  type: temporal
+- bypass:
+  - Inputs
+  - Outputs
+  keep:
+  - Weights
+  target: scratchpad
+  type: dataspace
+- bypass:
+  - Inputs
+  - Outputs
+  keep:
+  - Weights
+  target: weight_reg
+  type: dataspace
+- factors:
+  - R=1
+  - S=1
+  - P=1
+  - Q=1
+  - N=1
+  - C=1
+  - M=1
+  permutation:
+  - R
+  - S
+  - P
+  - Q
+  - C
+  - M
+  - N
+  target: weight_reg
+  type: temporal
+- bypass:
+  - Weights
+  - Outputs
+  keep:
+  - Inputs
+  target: input_activation_reg
+  type: dataspace
+- factors:
+  - R=1
+  - S=1
+  - P=1
+  - Q=1
+  - N=1
+  - C=1
+  - M=1
+  permutation:
+  - R
+  - S
+  - P
+  - Q
+  - C
+  - M
+  - N
+  target: input_activation_reg
+  type: temporal
+- bypass:
+  - Weights
+  - Inputs
+  keep:
+  - Outputs
+  target: output_activation_reg
+  type: dataspace
+- factors:
+  - R=1
+  - S=1
+  - P=1
+  - Q=1
+  - N=1
+  - C=1
+  - M=1
+  permutation:
+  - R
+  - S
+  - P
+  - Q
+  - C
+  - M
+  - N
+  target: output_activation_reg
+  type: temporal

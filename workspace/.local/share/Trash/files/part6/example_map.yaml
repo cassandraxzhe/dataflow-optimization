@@ -1,0 +1,24 @@
+mapping:
+# mapping for the DRAM
+- target: DRAM
+  type: temporal
+  factors: 
+  - K={{DRAM_factor_K}}
+  - M={{DRAM_factor_M}}
+  - N={{DRAM_factor_N}}
+  permutation: {{DRAM_permutation}}
+- target: Buffer
+  type: temporal
+  factors: 
+  - K={{Buffer_factor_K}}
+  - M={{Buffer_factor_M}}
+  - N={{Buffer_factor_N}}
+  permutation: {{Buffer_permutation}}
+- target: PE
+  type: spatial
+  factors: 
+  - M={{PE_factor_M}}
+  - N={{PE_factor_N}}
+  - K={{PE_factor_K}}
+  permutation: {{PE_permutation}}
+

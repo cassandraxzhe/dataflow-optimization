@@ -1,0 +1,70 @@
+sparse_optimizations:
+  targets:
+  - target: DRAM
+    representation_format:
+      data_spaces:
+      - name: A
+        ranks:    
+        - format: B # bitmask
+        - format: B  # bitmask
+        - format: B # bitmask
+        - format: B # bitmask
+        
+        - format: B # bitmask
+        - format: B # bitmask
+      - name: B
+        ranks:
+        - format: B # bitmask
+        - format: B  # bitmask
+        - format: B # bitmask
+        - format: B # bitmask
+        
+        - format: B # bitmask
+        - format: B # bitmask
+        
+
+  - target: Buffer
+    representation_format:
+      data_spaces:
+      - name: B
+        ranks:
+        - format: B # bitmask
+        - format: B  # bitmask
+        - format: B # bitmask
+        - format: B  # bitmask
+        
+      - name: A
+        ranks:
+        - format: B # bitmask
+        - format: B  # bitmask
+        - format: B # bitmask
+        - format: B  # bitmask
+
+
+  - target: PE
+    representation_format:
+      data_spaces:
+      - name: B
+        ranks:
+        - format: B # bitmask
+        - format: B  # bitmask
+        
+      - name: A
+        ranks:
+        - format: B # bitmask
+        - format: B  # bitmask
+        
+
+  - target: PE
+    action_optimization:
+    - type: gating
+      options:
+      - target: Z
+        condition_on: [A, B]
+
+  - target: MAC
+    compute_optimization:
+    - type: gating
+      options:
+      - target: Z
+        condition_on: [A, B]

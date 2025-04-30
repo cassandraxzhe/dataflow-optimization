@@ -1,0 +1,98 @@
+compound_components:
+  version: 0.4
+  classes:
+  - name: Imac_Decoder
+    attributes:
+      technology: must_specify
+      datawidth: must_specify
+      decoder_width: must_specify
+    subcomponents:
+      - name: multiplier
+        class: intmultiplier
+        attributes:
+          technology: technology
+          datawidth: datawidth
+      - name: adder
+        class: intadder
+        attributes:
+          technology: technology
+          datawidth: datawidth
+      - name: decoder
+        class: intadder
+        attributes:
+          technology: technology
+          datawidth: decoder_width
+    actions:
+      - name: mac_random
+        subcomponents:
+          - name: multiplier
+            actions:
+              - name: multiply_random
+          - name: adder
+            actions:
+              - name: add
+          - name: decoder
+            actions:
+              - name: adder
+      - name: mac_gated
+        subcomponents:
+          - name: multiplier
+            actions:
+              - name: idle
+          - name: adder
+            actions:
+              - name: idle
+      - name: mac_skipped
+        subcomponents:
+          - name: multiplier
+            actions:
+              - name: idle
+          - name: adder
+            actions:
+              - name: idle
+  - name: Fmac # 16 bit floating point multiplier
+    attributes:
+      technology: must_specify
+      exponent: 5
+      mantissa: 10
+      sign: 1
+    subcomponents:
+      - name: multiplier
+        class: fpmultiplier
+        attributes:
+          technology: technology
+          exponent: exponent
+          mantissa: mantissa
+          sign: sign
+      - name: adder
+        class: fpadder
+        attributes:
+          technology: technology
+          exponent: exponent
+          mantissa: mantissa
+          sign: sign
+    actions:
+      - name: compute
+        subcomponents:
+          - name: multiplier
+            actions:
+              - name: multiply_random
+          - name: adder
+            actions:
+              - name: add
+      - name: compute_gated
+        subcomponents:
+          - name: multiplier
+            actions:
+              - name: idle
+          - name: adder
+            actions:
+              - name: idle
+      - name: compute_skipped
+        subcomponents:
+          - name: multiplier
+            actions:
+              - name: idle
+          - name: adder
+            actions:
+              - name: idle

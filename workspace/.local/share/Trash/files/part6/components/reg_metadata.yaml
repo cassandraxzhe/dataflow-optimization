@@ -1,0 +1,34 @@
+compound_components:
+  version: 0.4
+  classes:
+  - name: reg_metadata
+    attributes:
+      technology: "must_specify"
+      width: "must_specify"
+
+    subcomponents:
+    - name: storage
+      class: reg
+      attributes:
+        technology: technology
+        width: width
+    - name: metadata_storage
+      class: reg
+      attributes:
+        technology: technology
+        width: width
+
+    actions:
+    - {name: read, subcomponents: [{name: storage, actions: [{name: read}]}]}
+    - {name: write, subcomponents: [{name: storage, actions: [{name: write}]}]}
+    - {name: update, subcomponents: [{name: storage, actions: [{name: update}]}]}
+
+    - {name: metadata_read, subcomponents: [{name: metadata_storage, actions: [{name: read}]}]}
+    - {name: metadata_write, subcomponents: [{name: metadata_storage, actions: [{name: write}]}]}
+    - {name: metadata_update, subcomponents: [{name: metadata_storage, actions: [{name: update}]}]}
+
+    - {name: gated_metadata_read, subcomponents: []}
+    - {name: gated_metadata_write, subcomponents: []}
+    - {name: gated_metadata_update, subcomponents: []}
+
+    - {name: leak, subcomponents: [{name: storage, actions: [{name: leak}]}, {name: metadata_storage, actions: [{name: leak}]}]}

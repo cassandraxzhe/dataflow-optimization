@@ -1,0 +1,165 @@
+constraints:
+  targets:
+  - bypass: []
+    keep:
+    - Inputs
+    - Outputs
+    - Weights
+    target: DRAM
+    type: dataspace
+  - factors:
+    - R=1
+    - S=1
+    - P=1
+    - Q=1
+    permutation:
+    - R
+    - S
+    - Q
+    - P
+    - C
+    - M
+    - N
+    target: DRAM
+    type: temporal
+  - bypass: []
+    keep:
+    - Inputs
+    - Outputs
+    - Weights
+    target: global_buffer
+    type: dataspace
+  - factors:
+    - P=1
+    - Q=1
+    - R=1
+    - S=1
+    permutation:
+    - S
+    - R
+    - Q
+    - P
+    - C
+    - M
+    - N
+    target: global_buffer
+    type: temporal
+  - factors:
+    - P=1
+    - Q=1
+    - R=1
+    - S=1
+    - N=1
+    - C<={{pe_meshX}}
+    - M<={{pe_meshY}}
+    permutation:
+    - Q
+    - S
+    - C
+    - R
+    - P
+    - N
+    - M
+    split: 1
+    target: PE
+    type: spatial
+  - bypass:
+    - Inputs
+    - Outputs
+    keep:
+    - Weights
+    target: scratchpad
+    type: dataspace
+  - factors:
+    - R=0
+    - S=0
+    - P=0
+    - Q=0
+    - M=1
+    - C=1
+    permutation:
+    - Q
+    - P
+    - N
+    - C
+    - M
+    - S
+    - R
+    target: scratchpad
+    type: temporal
+  - bypass:
+    - Inputs
+    - Outputs
+    keep:
+    - Weights
+    target: weight_reg
+    type: dataspace
+  - factors:
+    - R=1
+    - S=1
+    - P=1
+    - Q=1
+    - N=1
+    - C=1
+    - M=1
+    permutation:
+    - R
+    - S
+    - P
+    - Q
+    - C
+    - M
+    - N
+    target: weight_reg
+    type: temporal
+  - bypass:
+    - Weights
+    - Outputs
+    keep:
+    - Inputs
+    target: input_activation_reg
+    type: dataspace
+  - factors:
+    - R=1
+    - S=1
+    - P=1
+    - Q=1
+    - N=1
+    - C=1
+    - M=1
+    permutation:
+    - R
+    - S
+    - P
+    - Q
+    - C
+    - M
+    - N
+    target: input_activation_reg
+    type: temporal
+  - bypass:
+    - Weights
+    - Inputs
+    keep:
+    - Outputs
+    target: output_activation_reg
+    type: dataspace
+  - factors:
+    - R=1
+    - S=1
+    - P=1
+    - Q=1
+    - N=1
+    - C=1
+    - M=1
+    permutation:
+    - R
+    - S
+    - P
+    - Q
+    - C
+    - M
+    - N
+    target: output_activation_reg
+    type: temporal
+  version: 0.4
