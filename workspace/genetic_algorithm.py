@@ -21,7 +21,7 @@ class GeneticAlgorithm:
     def __init__(
             self, 
             dataflow=['R', 'S', 'P', 'Q', 'C', 'M', 'N'], 
-            component=Component.PE,
+            component= 4, #Component.PE,
             workload='layer_shapes/fc1.yaml', 
             pe_dims={'pe_meshX': 2, 'pe_meshY': 8}, 
             mapper='designs/_include/mapper.yaml',
@@ -31,7 +31,8 @@ class GeneticAlgorithm:
             k=20, 
             p=10, 
             iter=10,
-            early_stop=2
+            early_stop=2,
+            known_values={}
             ):
         # convolution
         self.dataflow = dataflow
@@ -53,10 +54,11 @@ class GeneticAlgorithm:
         
         self.mapper_call_count = 0
         self.VISITED={}
+        self.known_values=known_values
         self.mapper_calls = [] # list of [permutation, fitness] in order of call
         self.selected_fitnesses = [] # list of [permutation, fitness] for all selected in each iter in order
 
-    def dummy_fitness(dataflow):
+    def dummy_fitness(self, dataflow):
         return random.uniform(0, 1.0e-7)  
         
     
@@ -65,14 +67,26 @@ class GeneticAlgorithm:
         Calculates the fitness of a given permustation `dataflow`. Returns the
         inverse EDP after running the timeloop mapper on this dataflow.
         '''
-        data = self.evaluate(dataflow)
-        energy, latency = data
-        inverse_EDP = 1 / (energy * latency)
-        print(f"{dataflow} has a fitness of {inverse_EDP}")
+        
+        permutation = ''.join(dataflow)
+        
+        if permutation in self.known_values: # im trying to save time
+            print(f'{permutation} in known values!')
+            inverse_EDP = self.known_values[permutation]
+        else: # call mapper
+            data = self.evaluate(dataflow)
+            energy, latency = data
+            inverse_EDP = 1 / (energy * latency)
+            self.known_values[permutation] = inverse_EDP # update our yaml file
 
+        # keeping track of mapper call count for data purposes
+        self.mapper_call_count += 1
+        
         # update visited
-        self.VISITED[''.join(dataflow)] = inverse_EDP
-        self.mapper_calls.append([''.join(dataflow), inverse_EDP])
+        self.VISITED[permutation] = inverse_EDP # update this instance's visited
+        self.mapper_calls.append([permutation, inverse_EDP])
+            
+        print(f"{dataflow} has a fitness of {inverse_EDP}")
         return inverse_EDP
 
 
@@ -84,19 +98,19 @@ class GeneticAlgorithm:
         workload: the file path to the workload this is being evaluated on
         returns tuple of energy, latency
         '''
+        filename = ''.join(dataflow)
 
         stream = open(self.constraints, 'r')
         dictionary = yaml.safe_load(stream)
         idx = self.component # 4 # PE
         dictionary['constraints']['targets'][idx]['permutation'] = dataflow
 
-        filename = ''.join(dataflow)
         with open(f'iters/configs/{filename}.yaml', 'w') as file:
             yaml.dump(dictionary, file, default_flow_style=False)
 
         constraints = f'iters/configs/{filename}.yaml'
 
-        sys_1x16_result = run_timeloop_mapper( # TODO: this should be run_timeloop_mapper not run_timeloop_model!
+        result = run_timeloop_mapper(
             # config,
             self.pe_dims,
             architecture=self.architecture,
@@ -104,12 +118,9 @@ class GeneticAlgorithm:
             problem=self.workload,
             constraints=constraints 
         )
-
-        # keeping track of mapper call count for data purposes
-        self.mapper_call_count += 1
         
         stats = open('./output_dir/timeloop-mapper.stats.txt', 'r').read()
-        mapping = sys_1x16_result.mapping
+        mapping = result.mapping
 
         lines = stats.split('\n')
         energy = float([l for l in lines if 'Energy:' in l][0].split(' ', 2)[1])
@@ -155,9 +166,8 @@ class GeneticAlgorithm:
                 fitnesses.append([candidate, self.VISITED[trial_name]])
             else:
                 fitnesses.append([candidate, fitness(candidate)])
-        # print(f'fitnesses: {fitnesses}')
+
         fitnesses.sort(key=lambda x: x[1], reverse=True) # high to low fitness
-        # print(f'sorted fitnesses: {fitnesses}')
         selections = fitnesses[:p] 
         selections = [x[0] for x in selections] # len(selections) = p
         return selections
@@ -173,7 +183,7 @@ class GeneticAlgorithm:
             cut_point = random.randint(1, len(s1) - 1) # split at a random point and join
             first_half = s1[:cut_point]
             second_half = s2.copy()
-            # second_half.remove(parameter for parameter in first_half)
+
             for parameter in first_half:
                 second_half.remove(parameter)
             crossover = first_half + second_half
@@ -182,14 +192,9 @@ class GeneticAlgorithm:
         return crossovers
 
 
-    # TODO: include condition to check if a permutation has already been tested
-    # TODO: why aren't we reaching crossover print statement?
-    # TODO: why isn't the best fitness from initial population being chosen? ??????????
-
-
     def run(self, g=6.0e-8):
         
-        # fitness = dummy_fitness # TODO: FOR DEBUGGING
+        # fitness = self.dummy_fitness # TODO: FOR DEBUGGING
         fitness = self.fitness
 
         # Generate n base permutations
@@ -231,11 +236,15 @@ class GeneticAlgorithm:
                     crossovers_fitnesses.append([crossover, self.VISITED[trial_name]])
                 else: 
                     crossovers_fitnesses.append([crossover, fitness(crossover)])
+            # print(crossovers_fitnesses)
 
-            fitnesses = crossovers_fitnesses.sort(key=lambda x: x[1], reverse=True) # high to low fitness
-            # print(f'sorted fitnesses: {fitnesses}')
-            top_n_fitnesses = fitnesses[:n] 
-            population = [x[0] for x in selections] # len(selections) = p
+            # UPDATE POPULATION FOR NEXT ROUND!!!!!!
+            crossovers_fitnesses.sort(key=lambda x: x[1], reverse=True) # high to low fitness
+            top_n_fitnesses = crossovers_fitnesses[:self.n] 
+            # print(top_n_fitnesses)
+            self.selected_fitnesses.extend([x[1] for x in top_n_fitnesses])
+            population = [x[0] for x in top_n_fitnesses]
+            # print(population)
 
             best_df_trial, f_trial = max(crossovers_fitnesses, key=lambda x: x[1])
             if f_trial > f:
