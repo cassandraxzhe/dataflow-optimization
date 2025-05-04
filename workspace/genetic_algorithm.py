@@ -21,7 +21,7 @@ class GeneticAlgorithm:
     def __init__(
             self, 
             dataflow=['R', 'S', 'P', 'Q', 'C', 'M', 'N'], 
-            component= 4, #Component.PE,
+            components=[4], #Component.PE,
             workload='layer_shapes/fc1.yaml', 
             pe_dims={'pe_meshX': 2, 'pe_meshY': 8}, 
             mapper='designs/_include/mapper.yaml',
@@ -36,7 +36,7 @@ class GeneticAlgorithm:
             ):
         # convolution
         self.dataflow = dataflow
-        self.component=component
+        self.components=components
         self.workload = workload
         self.pe_dims = pe_dims
 
@@ -102,8 +102,10 @@ class GeneticAlgorithm:
 
         stream = open(self.constraints, 'r')
         dictionary = yaml.safe_load(stream)
-        idx = self.component # 4 # PE
-        dictionary['constraints']['targets'][idx]['permutation'] = dataflow
+
+        for component in self.components:
+            idx = component # 4 is PE
+            dictionary['constraints']['targets'][idx]['permutation'] = dataflow
 
         with open(f'iters/configs/{filename}.yaml', 'w') as file:
             yaml.dump(dictionary, file, default_flow_style=False)
@@ -225,6 +227,78 @@ class GeneticAlgorithm:
             # print(f'crossovers done running: {crossovers}')
 
             crossovers.extend(selections)
+            crossovers_fitnesses = []
+            i = 0
+            for crossover in crossovers:
+                i += 1
+                print(f'{i}/{len(crossovers)} candidate in crossover')
+                trial_name = ''.join(crossover)
+                if trial_name in self.VISITED:
+                    print(f'already visited {trial_name}')
+                    crossovers_fitnesses.append([crossover, self.VISITED[trial_name]])
+                else: 
+                    crossovers_fitnesses.append([crossover, fitness(crossover)])
+            # print(crossovers_fitnesses)
+
+            # UPDATE POPULATION FOR NEXT ROUND!!!!!!
+            crossovers_fitnesses.sort(key=lambda x: x[1], reverse=True) # high to low fitness
+            top_n_fitnesses = crossovers_fitnesses[:self.n] 
+            # print(top_n_fitnesses)
+            self.selected_fitnesses.extend([x[1] for x in top_n_fitnesses])
+            population = [x[0] for x in top_n_fitnesses]
+            # print(population)
+
+            best_df_trial, f_trial = max(crossovers_fitnesses, key=lambda x: x[1])
+            if f_trial > f:
+                plateau = 0
+                best_df, f = best_df_trial, f_trial
+                print(f'new best trial: {best_df_trial} with fitness {f}')
+            if f >= g:
+                # goal fitness reached, break
+                print('reached goal fitness, returning')
+                break
+            if plateau >= self.early_stop:
+                print(f'early stop after plateauing for {plateau} iters')
+                break
+
+        return best_df, f
+
+
+
+    def run_separate():
+        fitness = self.fitness
+
+        populations = {}
+        for component in self.components:
+            # generate a set of random base permutations for each component
+            populations[component] = [random.sample(self.dataflow, len(self.dataflow)) for _ in range(self.n)]
+
+        print("Initializing")
+        # Initialize base fitness and goal fitness
+        dfs_fitnesses = [[df, fitness(df)] for df in population] # TODO: need to update fitness to take in all permutatinos
+        best_df, f = max(dfs_fitnesses, key=lambda x: x[1])
+
+        plateau = 0
+
+        for i in range(self.iter):
+            print("\nITERATION: ", i)
+            plateau += 1
+            
+            # Mutation
+            for component in self.components:
+                mutations = self.mutation(populations[component])
+            # print(mutations)
+            
+            # Selection
+            selections = self.selection(mutations, self.p, fitness, self.workload, self.pe_dims) # TODO: need to update selection to take all mutations
+            # also would like selections to return a dict here like populations
+
+            # Crossover
+            crossovers = {}
+            for component in self.components:
+                crossovers[component] = self.crossover(selections[component])
+
+            crossovers.extend(selections) # TODO fix this
             crossovers_fitnesses = []
             i = 0
             for crossover in crossovers:
