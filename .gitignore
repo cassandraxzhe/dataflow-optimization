@@ -1,2 +1,5 @@
 workspace/iters/configs
-workspace/.local/Trash/
+workspace/.local/
+workspace/.ipynb_checkpoints/
+workspace/.ipython/
+workspace/.jupyter
