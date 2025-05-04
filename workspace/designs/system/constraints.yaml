@@ -7,7 +7,6 @@ constraints:
     bypass: []
   - target: DRAM
     type: temporal
-    factors: [R=1, S=1, P=1, Q=1]
     permutation: [R, S, Q, P, C, M, N]
   - target: global_buffer
     type: dataspace
@@ -15,18 +14,9 @@ constraints:
     bypass: []
   - target: global_buffer
     type: temporal
-    factors: [P=1, Q=1, R=1, S=1]
     permutation: [S, R, Q, P, C, M, N]
   - target: PE
     type: spatial
-    factors: 
-    - P=1
-    - Q=1
-    - R=1
-    - S=1
-    - N=1
-    - C<={{pe_meshX}}
-    - M<={{pe_meshY}}
     permutation: [C, M, R, S, P, Q, N]
     split: 1
   - target: scratchpad
@@ -35,7 +25,6 @@ constraints:
     bypass: [Inputs, Outputs]
   - target: scratchpad
     type: temporal
-    factors: [R=0, S=0, P=0, Q=0, M=1, C=1]
     permutation: [Q, P, N, C, M, S, R]
 
   - target: weight_reg
@@ -44,7 +33,6 @@ constraints:
     bypass: [Inputs, Outputs]
   - target: weight_reg
     type: temporal
-    factors: [R=1, S=1, P=1, Q=1, N=1, C=1, M=1]
     permutation: [R, S, P, Q, C, M, N]
   - target: input_activation_reg
     type: dataspace
@@ -52,7 +40,6 @@ constraints:
     bypass: [Weights, Outputs]
   - target: input_activation_reg
     type: temporal
-    factors: [R=1, S=1, P=1, Q=1, N=1, C=1, M=1]
     permutation: [R, S, P, Q, C, M, N]
   - target: output_activation_reg
     type: dataspace
@@ -60,5 +47,4 @@ constraints:
     bypass: [Weights, Inputs]
   - target: output_activation_reg
     type: temporal
-    factors: [R=1, S=1, P=1, Q=1, N=1, C=1, M=1]
     permutation: [R, S, P, Q, C, M, N]

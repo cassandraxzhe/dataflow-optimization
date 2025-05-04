@@ -14,8 +14,8 @@ architecture:
             multiple_buffering: 1
             min_utilization: 0
             allow_overbooking: false
-            meshX: 1
-            meshY: 16
+            meshX: 4
+            meshY: 4
             technology: "45nm"
             global_cycle_seconds: 1e-09
             power_gated_at: null
@@ -105,8 +105,8 @@ architecture:
             multiple_buffering: 1
             min_utilization: 0
             allow_overbooking: false
-            meshX: 1
-            meshY: 16
+            meshX: 4
+            meshY: 4
             technology: "45nm"
             global_cycle_seconds: 1e-09
             power_gated_at: null
@@ -190,8 +190,8 @@ architecture:
             multiple_buffering: 1
             min_utilization: 0
             allow_overbooking: false
-            meshX: 1
-            meshY: 16
+            meshX: 4
+            meshY: 4
             technology: "45nm"
             global_cycle_seconds: 1e-09
             power_gated_at: null
@@ -275,8 +275,8 @@ architecture:
             multiple_buffering: 1
             min_utilization: 0
             allow_overbooking: false
-            meshX: 1
-            meshY: 16
+            meshX: 4
+            meshY: 4
             technology: "45nm"
             global_cycle_seconds: 1e-09
             power_gated_at: null
@@ -353,8 +353,8 @@ architecture:
             num_pipline_stages: 2
             datawidth: 16
             has_power_gating: false
-            meshX: 1
-            meshY: 16
+            meshX: 4
+            meshY: 4
             technology: "45nm"
             global_cycle_seconds: 1e-09
             power_gated_at: null
@@ -396,7 +396,7 @@ architecture:
       - name: system_arch_top_level.DRAM[1..1]
         class: DRAM
         actions:
-          - name: leak
+          - name: update
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
@@ -404,18 +404,18 @@ architecture:
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
-          - name: write
+          - name: leak
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
-          - name: update
+          - name: write
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
       - name: system_arch_top_level.global_buffer[1..1]
         class: SRAM
         actions:
-          - name: leak
+          - name: update
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
@@ -423,11 +423,11 @@ architecture:
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
-          - name: write
+          - name: leak
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
-          - name: update
+          - name: write
             arguments:
                 global_cycle_seconds: 1e-09
                 action_latency_cycles: 1
