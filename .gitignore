@@ -1,5 +1,5 @@
 workspace/iters/configs
 workspace/.local/
-workspace/.ipynb_checkpoints/
+.ipynb_checkpoints
 workspace/.ipython/
 workspace/.jupyter
